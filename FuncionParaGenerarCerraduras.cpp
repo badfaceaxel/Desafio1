@@ -32,3 +32,28 @@ int** generateMatrices(int* sizes, int numMatrices) {
 
     return matrices;
 }
+
+bool cumpleRegla(int** matrices, int* sizes, int numMatrices, int* regla, int reglaSize) {
+    // Verificar si la regla es válida
+    if (reglaSize < 3 || (reglaSize - 1) != numMatrices) {
+        cout << "Regla invalida" << endl;
+        return false;
+    }
+
+    int filaInicial = regla[0];
+    int columnaInicial = regla[1];
+
+    for (int i = 0; i < numMatrices; i++) {
+        int size = sizes[i];
+        if (filaInicial >= size || columnaInicial >= size) {
+            cout << "Coordenadas iniciales fuera de rango para la matriz " << i << endl;
+            return false;
+        }
+    }
+
+    int numComparaciones = (reglaSize - 2);
+    if (numComparaciones != numMatrices - 1) {
+        cout << "El número de matrices no coincide con la regla" << endl;
+        return false;
+    }
+}
