@@ -34,26 +34,66 @@ int** generateMatrices(int* sizes, int numMatrices) {
 }
 
 bool cumpleRegla(int** matrices, int* sizes, int numMatrices, int* regla, int reglaSize) {
-    // Verificar si la regla es válida
-    if (reglaSize < 3 || (reglaSize - 1) != numMatrices) {
-        cout << "Regla invalida" << endl;
+    if (reglaSize < 3 || (reglaSize - 1) > numMatrices) {
+        cout << "Tamaño de regla invalido" << endl;
         return false;
     }
 
-    int filaInicial = regla[0];
-    int columnaInicial = regla[1];
-
     for (int i = 0; i < numMatrices; i++) {
         int size = sizes[i];
+        int filaInicial = regla[0] - 1;
+        int columnaInicial = regla[1] - 1;
+
         if (filaInicial >= size || columnaInicial >= size) {
             cout << "Coordenadas iniciales fuera de rango para la matriz " << i << endl;
             return false;
         }
     }
 
-    int numComparaciones = (reglaSize - 2);
-    if (numComparaciones != numMatrices - 1) {
-        cout << "El número de matrices no coincide con la regla" << endl;
-        return false;
+    int indiceRegla = 2;
+    int valorInicial = matrices[0][regla[0] - 1][regla[1] - 1];
+
+    for (int i = 1; i < numMatrices; i++) {
+        int operacion = regla[indiceRegla++];
+        int fila = regla[indiceRegla++] - 1;
+        int columna = regla[indiceRegla++] - 1;
+
+        int size = sizes[i];
+        if (fila >= size || columna >= size) {
+            cout << "Coordenadas fuera de rango para la matriz " << i << endl;
+            return false;
+        }
+
+        int valor = matrices[i][fila][columna];
+
+        switch (operacion) {
+        case -1:
+            if (valorInicial >= valor) {
+                cout << "No se cumple la regla: " << valorInicial << " >= " << valor << endl;
+                return false;
+            }
+            valorInicial = valor;
+            break;
+        case 1:
+            if (valorInicial <= valor) {
+                cout << "No se cumple la regla: " << valorInicial << " <= " << valor << endl;
+                return false;
+            }
+            valorInicial = valor;
+            break;
+        case 0:
+            if (valorInicial != valor) {
+                cout << "No se cumple la regla: " << valorInicial << " != " << valor << endl;
+                return false;
+            }
+            valorInicial = valor;
+            break;
+        default:
+            cout << "Operacion invalida en la regla" << endl;
+            return false;
+        }
     }
+
+    cout << "Se cumple la regla" << endl;
+    return true;
 }
