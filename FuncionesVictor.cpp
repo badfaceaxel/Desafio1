@@ -1,9 +1,5 @@
-#include <iostream>
+#include "Desafio1.h"
 
-const int N = 5;
-
-//i = filas, j =columnas
-// Función para rotar una matriz
 void rotaMatriz(int matriz[][N], int* rotacionMatrices[], int rotations) {
 
     // Realizar las rotaciones "3"
@@ -12,7 +8,7 @@ void rotaMatriz(int matriz[][N], int* rotacionMatrices[], int rotations) {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) { //i la fila de la orginal y se convierte en columna de la rotada
                 rotacionMatriz[N - j - 1][i] = matriz[i][j];//j es la columna de la orginal y se convierte en fila de la rotada
-            }//Se toman asi los valores por la rotacion (N - j- 1, i), j es 0 (primera fila), N - j - 1 será N - 1 (última columna)
+            }//Se toman asi los valores por la rotacion (N - j- 1, i), j es 0 (primera fila), N - j - 1 sera N - 1 (ultima columna)
         }
         // Almacenar la matriz rotada en el arreglo de punteros
         for (int i = 0; i < N; i++) {
@@ -39,40 +35,28 @@ void rotaMatriz(int matriz[][N], int* rotacionMatrices[], int rotations) {
     }
 }
 
-int main() {
-    // Ejemplo de uso
-    int matriz[N][N] = {{1, 2, 3, 4, 5},
-                        {6, 7, 8, 9, 10},
-                        {11, 12, 0, 13, 14},
-                        {15, 16, 17, 18 ,19},
-                        {20, 21, 22, 23, 24}};
-    //Memoria dinamica asignacion
-    int* rotacionMatrices[3];
-    for (int i = 0; i < 3; ++i) {
-        rotacionMatrices[i] = new int[N * N];
+int* validarReglaK(int reglaK[], int a) {
+
+    // Solicitar las entradas de la regla K
+    std::cout << "Ingrese la regla K (" << a << " elementos separados por espacios): ";
+    for (int i = 0; i < a; ++i) {
+        std::cin >> reglaK[i];
     }
-    rotaMatriz(matriz, rotacionMatrices, 3);
 
-    int valor = rotacionMatrices[1][(4*5+4)];
-    std::cout << "Valor en la posicion (4, 4) de la segunda matriz rotada: " << valor << std::endl;
+    // Verificar que las dos primeras entradas sean enteros positivos o cero
+    if (reglaK[0] < 0 || reglaK[1] < 0) {
+        std::cout << "Las dos primeras entradas deben ser enteros positivos o cero." << std::endl;
+        return nullptr;
+    }
 
-    // Imprimir las matrices almacenadas en el arreglo de punteros
-    std::cout << "Matrices almacenadas:" << std::endl;
-    for (int k = 0; k < 3; ++k) {
-        std::cout << "Rotacion " << k + 1 << ":" << std::endl;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                std::cout << rotacionMatrices[k][i * N + j] << " ";
-            }
-            std::cout << std::endl;
+    // Verificar que las entradas a partir de la tercera sean -1, 0, o 1
+    for (int i = 2; i < a; ++i) {
+        if (reglaK[i] != -1 && reglaK[i] != 0 && reglaK[i] != 1) {
+            std::cout << "Las entradas a partir de la tercera deben ser -1, 0, o 1." << std::endl;
+            return nullptr;
         }
-        std::cout << std::endl;
     }
 
-    // Liberar la memoria asignada dinámicamente
-    for (int i = 0; i < 3; ++i) {
-        delete[] rotacionMatrices[i];
-    }
-
-    return 0;
+    // Si paso todas las validaciones, retornar un puntero al arreglo de reglaK
+    return reglaK;
 }
