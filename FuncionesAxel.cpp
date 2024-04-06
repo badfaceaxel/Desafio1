@@ -1,41 +1,72 @@
 #include <Desafio1.h>
-#include <iostream>>
 
-using namespace std;
+int*** generateMatrices(int* sizes, int numMatrices) {
+    // Crear el arreglo de punteros a arreglos de matrices bidimensionales
+    int*** arregloDeMatrices = new int**[numMatrices];
 
-
-int** generateMatrices(int* sizes, int numMatrices) {
-    int totalSize = 0;
-    for (int i = 0; i < numMatrices; i++) {
-        totalSize += sizes[i] * sizes[i];
-    }
-
-    int** matrices = new int*[totalSize];
-    int idx = 0;
-
-    for (int i = 0; i < numMatrices; i++) {
+    // Generar cada matriz y almacenarla en el arreglo
+    for (int i = 0; i < numMatrices; ++i) {
         int size = sizes[i];
         int mid = size / 2;
         int currentValue = 1;
-        for (int j = 0; j < size; j++) {
-            matrices[idx] = new int[size];
-            for (int k = 0; k < size; k++) {
+
+        // Asignar memoria para la matriz bidimensional
+        arregloDeMatrices[i] = new int*[size];
+        for (int j = 0; j < size; ++j) {
+            arregloDeMatrices[i][j] = new int[size];
+        }
+
+        // Inicializar valores de la matriz
+        for (int j = 0; j < size; ++j) {
+            for (int k = 0; k < size; ++k) {
                 if (j == mid && k == mid) {
-                    matrices[idx][k] = 0;
+                    arregloDeMatrices[i][j][k] = 0;
                 } else {
-                    matrices[idx][k] = currentValue++;
+                    arregloDeMatrices[i][j][k] = currentValue++;
                 }
             }
-            idx++;
         }
     }
 
-    return matrices;
+    return arregloDeMatrices;
 }
 
-bool cumpleRegla(int** matrices, int* sizes, int numMatrices, int* regla, int reglaSize) {
+
+void imprimirMatrices(int*** arregloDeMatrices, int numMatrices, int* sizes) {
+    for (int i = 0; i < numMatrices; ++i) {
+        std::cout << "Matriz " << i+1 << ":" << std::endl;
+        int size = sizes[i];
+        for (int j = 0; j < size; ++j) {
+            for (int k = 0; k < size; ++k) {
+                // Imprimir cada elemento con un ancho fijo
+                std::cout << std::setw(4) << arregloDeMatrices[i][j][k];
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+}
+
+
+void liberarMemoria(int*** arregloDeMatrices, int numMatrices, int* sizes) {
+    // Liberar la memoria asignada para cada matriz
+    for (int i = 0; i < numMatrices; ++i) {
+        int size = sizes[i];
+        for (int j = 0; j < size; ++j) {
+            delete[] arregloDeMatrices[i][j];
+        }
+        delete[] arregloDeMatrices[i];
+    }
+
+    // Liberar la memoria asignada para el arreglo de punteros a matrices
+    delete[] arregloDeMatrices;
+}
+
+
+
+bool cumpleRegla(int*** matrices, int* sizes, int numMatrices, int* regla, int reglaSize) {
     if (reglaSize < 3 || (reglaSize - 1) > numMatrices) {
-        cout << "Tamaño de regla invalido" << endl;
+        cout << "Tamaño de regla inválido" << endl;
         return false;
     }
 
@@ -49,22 +80,23 @@ bool cumpleRegla(int** matrices, int* sizes, int numMatrices, int* regla, int re
             return false;
         }
     }
-
+    int columnaInicial = regla[1] - 1;
+    int filaInicial = regla[0] - 1;
     int indiceRegla = 2;
-    int valorInicial = matrices[0][regla[0] - 1][regla[1] - 1];
+    int valorInicial = matrices[0][filaInicial][columnaInicial];
 
     for (int i = 1; i < numMatrices; i++) {
         int operacion = regla[indiceRegla++];
-        int fila = regla[indiceRegla++] - 1;
-        int columna = regla[indiceRegla++] - 1;
+        int fila = regla[0] - 1;
+        int columna = regla[1] - 1;
 
-        int size = sizes[i];
+        int size = sizes[i-1];
         if (fila >= size || columna >= size) {
             cout << "Coordenadas fuera de rango para la matriz " << i << endl;
             return false;
         }
 
-        int valor = matrices[i][fila][columna];
+        int valor = matrices[i][filaInicial][columnaInicial];
 
         switch (operacion) {
         case -1:
