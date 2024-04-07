@@ -5,10 +5,10 @@ using namespace std;
 
 
 int main() {
-    int sizes[] = {3, 5, 7, 3, 9};
+    int sizes[] = {3, 5, 7, 9};
     int numMatrices = sizeof(sizes) / sizeof(int);
     int*** ArregloDeMatrices = generateMatrices(sizes, numMatrices);
-    int regla[] = {1, 1, 0, 0, 0, 0};
+    int regla[] = {4, 4, -1, -1, -1,};
     int reglaSize = sizeof(regla) / sizeof(int);
 
     // Imprimir las matrices
@@ -20,6 +20,8 @@ int main() {
 
     bool cumple = cumpleRegla(ArregloDeMatrices, sizes, numMatrices, regla, reglaSize);
     cout<<cumple<<endl;
+
+
     cout<<endl;
     cout<<endl;
     cout<<endl;

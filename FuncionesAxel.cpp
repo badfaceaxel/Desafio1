@@ -70,33 +70,25 @@ bool cumpleRegla(int*** matrices, int* sizes, int numMatrices, int* regla, int r
         return false;
     }
 
-    for (int i = 0; i < numMatrices; i++) {
-        int size = sizes[i];
-        int filaInicial = regla[0] - 1;
-        int columnaInicial = regla[1] - 1;
+    int columna = regla[1] - 1;
+    int fila = regla[0] - 1;
 
-        if (filaInicial >= size || columnaInicial >= size) {
-            cout << "Coordenadas iniciales fuera de rango para la matriz " << i << endl;
+    for (int i = 0; i < numMatrices; i++) {     //Se valida que la posicion sea valida (valga la rebundancia) en todos los tamaños de las matrices
+        int size = sizes[i];
+        if (fila >= size || columna >= size) {
+            cout << "Las Coordenadas ingresadas: "<<"["<<regla[0]<<"]["<<regla[1]<<"]"<<" estan fuera de rango para la Matriz:  "<< sizes[i]<<"x"<<sizes[i]<<endl;
             return false;
         }
     }
-    int columnaInicial = regla[1] - 1;
-    int filaInicial = regla[0] - 1;
+
     int indiceRegla = 2;
-    int valorInicial = matrices[0][filaInicial][columnaInicial];
+    int valorInicial = matrices[0][fila][columna];
 
-    for (int i = 1; i < numMatrices; i++) {
-        int operacion = regla[indiceRegla++];
-        int fila = regla[0] - 1;
-        int columna = regla[1] - 1;
-
-        int size = sizes[i-1];
-        if (fila >= size || columna >= size) {
-            cout << "Coordenadas fuera de rango para la matriz " << i << endl;
-            return false;
-        }
-
-        int valor = matrices[i][filaInicial][columnaInicial];
+    for (int i = 1, j = 0; i < numMatrices; i++, j++) {
+        int operacion = regla[indiceRegla+j];
+        int dif = sizes[j] - sizes[i];
+        int sum = abs(dif)/2;
+        int valor = matrices[i][fila+sum][columna+sum];
 
         switch (operacion) {
         case -1:
@@ -104,28 +96,33 @@ bool cumpleRegla(int*** matrices, int* sizes, int numMatrices, int* regla, int r
                 cout << "No se cumple la regla: " << valorInicial << " >= " << valor << endl;
                 return false;
             }
+            cout << valorInicial <<"<"<< valor <<endl;
             valorInicial = valor;
+            cout<<endl;
             break;
         case 1:
             if (valorInicial <= valor) {
                 cout << "No se cumple la regla: " << valorInicial << " <= " << valor << endl;
                 return false;
             }
+            cout << valorInicial <<">"<< valor <<endl;
             valorInicial = valor;
+            cout<<endl;
             break;
         case 0:
             if (valorInicial != valor) {
                 cout << "No se cumple la regla: " << valorInicial << " != " << valor << endl;
                 return false;
             }
-            valorInicial = valor;
+            cout << valorInicial <<"="<< valor <<endl;
+            cout<<endl;
             break;
         default:
-            cout << "Operacion invalida en la regla" << endl;
+            cout << "Operacion invalida en la regla." << endl;
+            cout<<endl;
             return false;
         }
     }
-
     cout << "Se cumple la regla" << endl;
     return true;
 }
