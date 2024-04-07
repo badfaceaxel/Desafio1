@@ -37,6 +37,7 @@ int main() {
         delete[] rotacionMatrices[i];
     }
 
+    //Funcion Regla
     int a;
     // Solicitar el tamano de la regla K
     std::cout << "Ingrese el tamano de la regla K (debe ser al menos 3): ";
@@ -59,10 +60,28 @@ int main() {
         }
 
         //Prueba para sacar datos de la regla
-        std::cout << "El tercer valor de la regla es "<< reglaKValidada[3] << std::endl;
+        std::cout << "El segundo valor de la regla es "<< reglaKValidada[3] << std::endl;
 
         // Liberar la memoria del arreglo dinamico
         delete[] reglaK;
+        delete[] reglaKValidada;
+
     }
+    std::cout<<" "<<std::endl;
+    //Funcion Tamano
+    int TamanoArreglo = 4;
+    int *arregloTamano = new int[TamanoArreglo];
+    int reglaK[] = {4, 3, 1, 1, -1};
+    int* arregloTamanoValidado = validarTamano(arregloTamano, reglaK, TamanoArreglo);
+
+    std::cout<<"Arreglo de tamanos"<<std::endl;
+    for (int i = 0; i < TamanoArreglo; ++i) {
+        std::cout << arregloTamanoValidado[i] << " ";
+    }
+    std::cout << std::endl;
+
+    delete[] arregloTamano;
+    delete[] arregloTamanoValidado;
+
     return 0;
 }
