@@ -4,8 +4,9 @@
 using namespace std;
 const int N = 5;
 
-void rotaMatriz(int matriz[][N], int* rotacionMatrices[], int rotations);
+void rotarMatriz(int** matriz, int filas, int columnas);
+int*** obtenerRotaciones(int** matriz, int filas, int columnas);
 int* validarReglaK(int reglaK[], int n);
-int* validarTamano(int arregloTamano[], int reglaK[], int TamanoArreglo);
+int** validarTamano(int arregloTamano[], int reglaK[], int TamanoArreglo, int arregloRotaciones[]);
 
 #endif // DESAFIO1_H

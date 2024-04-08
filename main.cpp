@@ -2,41 +2,6 @@
 #include "Desafio1.h"
 
 int main() {
-
-    // Ejemplo de uso
-    int matriz[N][N] = {{1, 2, 3, 4, 5},
-                        {6, 7, 8, 9, 10},
-                        {11, 12, 0, 13, 14},
-                        {15, 16, 17, 18 ,19},
-                        {20, 21, 22, 23, 24}};
-    //Memoria dinamica asignacion
-    int* rotacionMatrices[3];
-    for (int i = 0; i < 3; ++i) {
-        rotacionMatrices[i] = new int[N * N];
-    }
-    rotaMatriz(matriz, rotacionMatrices, 3);
-
-    int valor = rotacionMatrices[1][(4*5+4)];
-    std::cout << "Valor en la posicion (4, 4) de la segunda matriz rotada: " << valor << std::endl;
-
-    // Imprimir las matrices almacenadas en el arreglo de punteros
-    std::cout << "Matrices almacenadas:" << std::endl;
-    for (int k = 0; k < 3; ++k) {
-        std::cout << "Rotacion " << k + 1 << ":" << std::endl;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                std::cout << rotacionMatrices[k][i * N + j] << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
-
-    // Liberar la memoria asignada dinamicamente
-    for (int i = 0; i < 3; ++i) {
-        delete[] rotacionMatrices[i];
-    }
-
     //Funcion Regla
     int a;
     // Solicitar el tamano de la regla K
@@ -68,20 +33,37 @@ int main() {
 
     }
     std::cout<<" "<<std::endl;
-    //Funcion Tamano
-    int TamanoArreglo = 4;
-    int *arregloTamano = new int[TamanoArreglo];
-    int reglaK[] = {4, 3, 1, 1, -1};
-    int* arregloTamanoValidado = validarTamano(arregloTamano, reglaK, TamanoArreglo);
+    //Funcion Tamaño
+    int TamanoArreglo = 7;
+    // Declarar los arreglos de forma dinamica
+    int* arregloTamano = new int[TamanoArreglo];
+    int reglaK[] = {4, 3, 1, 1, 1, -1, -1, 0};
+    int* arregloRotaciones = new int[TamanoArreglo];
 
-    std::cout<<"Arreglo de tamanos"<<std::endl;
+    // Llamar a la funcion validarTamano() y recibir los resultados en variables separadas
+    int** resultado = validarTamano(arregloTamano, reglaK, TamanoArreglo, arregloRotaciones);
+    int* nuevoArregloTamano = resultado[0];
+    int* nuevoArregloRotaciones = resultado[1];
+
+    // Imprimir los resultados
+    std::cout << "Arreglo de tamanos: ";
     for (int i = 0; i < TamanoArreglo; ++i) {
-        std::cout << arregloTamanoValidado[i] << " ";
+        std::cout << nuevoArregloTamano[i] << " ";
     }
     std::cout << std::endl;
 
+    std::cout << "Arreglo de rotaciones: ";
+    for (int i = 0; i < TamanoArreglo; ++i) {
+        std::cout << nuevoArregloRotaciones[i] << " ";
+    }
+    std::cout << std::endl;
+
+    // Liberar la memoria dinámica
     delete[] arregloTamano;
-    delete[] arregloTamanoValidado;
+    delete[] arregloRotaciones;
+    delete[] nuevoArregloTamano;
+    delete[] nuevoArregloRotaciones;
+    delete[] resultado;
 
     return 0;
 }

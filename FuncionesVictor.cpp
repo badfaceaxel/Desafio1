@@ -1,38 +1,60 @@
 #include "Desafio1.h"
 
-void rotaMatriz(int matriz[][N], int* rotacionMatrices[], int rotations) {
+void rotarMatriz(int** matriz, int filas, int columnas) {
+    // Crear una matriz temporal para almacenar la matriz rotada
+    int** matrizRotada = new int*[columnas];
+    for (int i = 0; i < columnas; ++i) {
+        matrizRotada[i] = new int[filas];
+    }
 
-    // Realizar las rotaciones "3"
-    for (int k = 0; k < rotations; ++k) {
-        int rotacionMatriz[N][N];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) { //i la fila de la orginal y se convierte en columna de la rotada
-                rotacionMatriz[N - j - 1][i] = matriz[i][j];//j es la columna de la orginal y se convierte en fila de la rotada
-            }//Se toman asi los valores por la rotacion (N - j- 1, i), j es 0 (primera fila), N - j - 1 será N - 1 (última columna)
-        }
-        // Almacenar la matriz rotada en el arreglo de punteros
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                rotacionMatrices[k][i * N + j] = rotacionMatriz[i][j]; //Indice lineal i*N + j que seria como encontrar el valor
-                                                                       //de la posicion de esa matriz como se hace abajo (4,3) --> 4*5+3
-            }
-        }
-        // Imprimir la matriz rotada
-        std::cout << "Rotacion " << k + 1 << ":" << std::endl;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                std::cout << rotacionMatriz[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-        // Actualizar la matriz original para la siguiente rotacion (matriz)
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                matriz[i][j] = rotacionMatriz[i][j];
-            }
+    // Realizar la rotación
+    for (int i = 0; i < filas; ++i) {
+        for (int j = 0; j < columnas; ++j) {
+            matrizRotada[columnas - j - 1][i] = matriz[i][j];
         }
     }
+
+    // Copiar la matriz rotada de vuelta a la matriz original
+    for (int i = 0; i < columnas; ++i) {
+        for (int j = 0; j < filas; ++j) {
+            matriz[i][j] = matrizRotada[i][j];
+        }
+    }
+
+    // Liberar la memoria asignada para la matriz rotada
+    for (int i = 0; i < columnas; ++i) {
+        delete[] matrizRotada[i];
+    }
+    delete[] matrizRotada;
+}
+
+// Función para obtener los estados de rotación de una matriz
+int*** obtenerRotaciones(int** matriz, int filas, int columnas) {
+    // Crear un arreglo de punteros a matrices para almacenar las rotaciones
+    int*** rotaciones = new int**[4];
+
+    // Rotar la matriz original y almacenarla en el arreglo de rotaciones
+    rotaciones[0] = new int*[filas];
+    for (int i = 0; i < filas; ++i) {
+        rotaciones[0][i] = new int[columnas];
+        for (int j = 0; j < columnas; ++j) {
+            rotaciones[0][i][j] = matriz[i][j];
+        }
+    }
+
+    // Realizar las rotaciones adicionales y almacenarlas en el arreglo de rotaciones
+    for (int i = 1; i <= 3; ++i) {
+        rotaciones[i] = new int*[filas];
+        for (int j = 0; j < filas; ++j) {
+            rotaciones[i][j] = new int[columnas];
+            for (int k = 0; k < columnas; ++k) {
+                rotaciones[i][j][k] = rotaciones[i-1][j][k];
+            }
+        }
+        rotarMatriz(rotaciones[i], filas, columnas);
+    }
+
+    return rotaciones;
 }
 
 int* validarReglaK(int reglaK[], int a) {
@@ -57,49 +79,41 @@ int* validarReglaK(int reglaK[], int a) {
         }
     }
 
-    // Si paso todas las validaciones, retornar un puntero al arreglo de reglaK
+    // Si pasó todas las validaciones, retornar un puntero al arreglo de reglaK
     return reglaK;
 }
 
-int* validarTamano(int arregloTamano[], int reglaK[], int TamanoArreglo) {
-
+int** validarTamano(int arregloTamano[], int reglaK[], int TamanoArreglo, int arregloRotaciones[]) {
     int cantidadUnos = 0;
-
 
     for (int i = 2; i < 5; ++i) {
         if (reglaK[i] == 1) {
             cantidadUnos++;
         }
     }
-    std::cout << "CantUnos: " <<cantidadUnos << std::endl;
+    std::cout << cantidadUnos << std::endl;//Se saca la cantidad de unos del arreglo para el caso del -1
 
     int tamanoMinimo = 3;
     int minRows = reglaK[0];
     int minCols = reglaK[1];
 
     if (minRows > minCols) {
-        if (minRows > 2){
-            for(int i = 3; i<=minRows; i += 2)
+        if (minRows > 2) {
+            for (int i = 3; i <= minRows; i += 2)
                 tamanoMinimo += 2;
         }
-
-
     } else if (minRows < minCols) {
-        if (minCols > 2){
-            for(int i = 3; i<=minCols; i += 2)
+        if (minCols > 2) {
+            for (int i = 3; i <= minCols; i += 2)
                 tamanoMinimo += 2;
         }
-
     } else { //son iguales
-        if (minRows > 2){
-            for(int i = 3; i<=minRows; i += 2)
+        if (minRows > 2) {
+            for (int i = 3; i <= minRows; i += 2)
                 tamanoMinimo += 2;
         }
-
     }
-    std::cout << "Tamano min: " << tamanoMinimo << std::endl;
-
-
+    std::cout << tamanoMinimo << std::endl;//Se saca el tamano minimo que tiene la matriz segun las coordenadas dadas
 
     int menor;
     int extrapol = 0;
@@ -114,99 +128,183 @@ int* validarTamano(int arregloTamano[], int reglaK[], int TamanoArreglo) {
         extrapol++;
         menor--;
     }
-    std::cout<< "Cant extrapol:  " <<extrapol <<std::endl;
-
-    if (reglaK[2] == -1) {
-
-        int tamanoMaximo = tamanoMinimo+(2*cantidadUnos);
+    std::cout << extrapol << std::endl;//Se saca extrapol que es la variable que nos ayuda para saber la cantidad de veces
+                                       //que puede mermar el tamaño de una matriz segun las coordenadas dadas
+    if (reglaK[2] == -1) {//CASO DEL -1
+        int tamanoMaximo = tamanoMinimo + (2 * cantidadUnos);//Se hace una operacion con los -1 para saber el tamañoMaximo de la matriz
         arregloTamano[0] = tamanoMinimo;
-        arregloTamano[1] = tamanoMaximo;
+        arregloTamano[1] = tamanoMaximo;//Se le asigna ese tamano maximo a la 2 posicion para maniobrar con libertad los tamaños a lo largo del ciclo
 
-        for(int i = 3; i <= TamanoArreglo; i++){
-
-            if(reglaK[i] == 1) {
+        for (int i = 3; i <= TamanoArreglo; i++) {
+            if (reglaK[i] == 1) {
                 tamanoMaximo -= 2;
-                arregloTamano[i-1] = tamanoMaximo;
-
-            }else if(reglaK[i] == -1) {
+                arregloTamano[i - 1] = tamanoMaximo;
+                extrapol--;
+                if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                    std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                    break;
+                }
+            } else if (reglaK[i] == -1) {
                 tamanoMaximo += 2;
-                arregloTamano[i-1] = tamanoMaximo;
-
+                arregloTamano[i - 1] = tamanoMaximo;
+                extrapol++;
             } else {
-                arregloTamano[i-1] = tamanoMaximo;
-
+                arregloTamano[i - 1] = tamanoMaximo;
             }
         }
-
-
-    } else if (reglaK[2] == 1) {
-
-        int tamanoMaximo = tamanoMinimo+(2*extrapol);
-        arregloTamano[0] = tamanoMaximo;
-        arregloTamano[1] = tamanoMaximo;//rotaciones
+    } else if (reglaK[2] == 1) {//CASO DEL 1
+        int tamanoMaximo = tamanoMinimo + (2 * extrapol);//Se utiliza el extrapol para saber la cantidad de veces que puedo disminuir la matriz
+        arregloTamano[0] = tamanoMaximo;//Se le hacen rotaciones a esta matriz y se le asigna al arreglo como indicativo en la linea de abajo
+        arregloRotaciones[0] = 1;
+        arregloTamano[1] = tamanoMaximo;//Cualquier matrizA si la rotaX veces va ser mayor que la B si son de igual tamaño
         int cont = 1;
+        int i = 3;
 
-        while(tamanoMaximo >= 3){
-
-            for(int i = 3; i <= TamanoArreglo; i++){
-
-                if(reglaK[i] == 1) {
-
-                    if(cont == 1){
+        while (tamanoMaximo >= 3) {//Condicion para saber si el sistema se puede crear
+            if (i <= TamanoArreglo) {
+                if (reglaK[i] == 1) {
+                    if (cont == 1) {
+                        if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                            std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                            break;
+                        }
                         tamanoMaximo -= 2;
-                        arregloTamano[i-1] = tamanoMaximo;
-                        cont--;
-
+                        arregloTamano[i - 1] = tamanoMaximo;
+                        arregloRotaciones[i - 1] = 1;
+                        cont--;//con la ayuda del contador y de la posicion del arreglo se puede saber que matriz es posible que necesite rotaciones
+                        extrapol--;
                     } else {
-                        arregloTamano[i-1] = tamanoMaximo;
+                        if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                            std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                            break;
+                        }
+                        arregloTamano[i - 1] = tamanoMaximo;//Si no se necesita rotaciones es del mismo tamaño siguiendo algo dicho anteriormente
                         cont++;
                     }
-                }else if(reglaK[i] == -1) {
+                } else if (reglaK[i] == -1) {
                     tamanoMaximo += 2;
-                    arregloTamano[i-1] = tamanoMaximo;
-
+                    arregloTamano[i - 1] = tamanoMaximo;//Caso del -1 dentro del ciclo
+                    extrapol++;
                 } else {
-                    arregloTamano[i-1] = tamanoMaximo;
-
+                    arregloTamano[i - 1] = tamanoMaximo;
                 }
             }
-            return arregloTamano;
+            i++;
+
+            if (i > TamanoArreglo) {
+                // Asignar memoria dinamica para los nuevos arreglos
+                int* nuevoArregloTamano = new int[TamanoArreglo];
+                int* nuevoArregloRotaciones = new int[TamanoArreglo];
+
+                // Copiar los valores a los nuevos arreglos
+                for (int j = 0; j < TamanoArreglo; j++) {
+                    nuevoArregloTamano[j] = arregloTamano[j];
+                    nuevoArregloRotaciones[j] = arregloRotaciones[j];
+                }
+
+                // Retornar los nuevos arreglos
+                return new int*[2] {nuevoArregloTamano, nuevoArregloRotaciones};
+            }
         }
-        std::cout<<"Con las coordenadas dadas no se puede crear un sistema de apertura."<<std::endl;
 
-
-    } else {
-
+        if (tamanoMaximo < 3) {//Se hace una prueba final para corrobar al 100% de que no se puede crear el sistema de apertura con las condiciones dadas
+            std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+        }
+    } else {//CASO DEL 0
         arregloTamano[0] = tamanoMinimo;
         arregloTamano[1] = tamanoMinimo;
         int pos = 3;
-        while(reglaK[pos] == 0){
-            arregloTamano[pos-1] = tamanoMinimo;
+        while (reglaK[pos] == 0) {
+            arregloTamano[pos - 1] = tamanoMinimo;
             pos++;
-        }
-        if(reglaK[pos] == -1){
-            int tamanoMaximo = tamanoMinimo+(2*cantidadUnos);
-            for(int i = pos; i <= TamanoArreglo; i++){
+        }//El 0 como es igual siempre sera el mismo tamaño y se comprueba si hay varios 0 seguidos para seguir con el mismo tamaño siempre
 
-                if(reglaK[i] == 1) {
+        if (reglaK[pos] == -1) {
+            int tamanoMaximo = tamanoMinimo + (2 * cantidadUnos);//MISMA LOGICA QUE EL CASO -1
+            for (int i = pos; i <= TamanoArreglo; i++) {
+                if (reglaK[i] == 1) {
                     tamanoMaximo -= 2;
-                    arregloTamano[i-1] = tamanoMaximo;
-
-                }else if(reglaK[i] == -1) {
+                    arregloTamano[i - 1] = tamanoMaximo;
+                    extrapol--;
+                    if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                        std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                        break;
+                    }
+                } else if (reglaK[i] == -1) {
                     tamanoMaximo += 2;
-                    arregloTamano[i-1] = tamanoMaximo;
-
+                    arregloTamano[i - 1] = tamanoMaximo;
+                    extrapol++;
                 } else {
-                    arregloTamano[i-1] = tamanoMaximo;
-
+                    arregloTamano[i - 1] = tamanoMaximo;
                 }
             }
-        } else {
+        } else {//Caso del 1 dentro del ciclo
+            int tamanoMaximo = tamanoMinimo + (2 * extrapol);
+            for (int i = 0; i <= pos; i++) {//Se cambian los tamaños de las posiciones donde hay 0 por el tamanomaximo
+                arregloTamano[i] = tamanoMaximo;
+            }
+            tamanoMaximo -= 2;//Se le resta 2 al tamanomaximo y cont = 0, para poder aplicar la misma logica del caso 1
+            int cont = 0;
 
+            while (tamanoMaximo >= 3) {//Misma logica que el caso del 1
+                if (pos <= TamanoArreglo) {
+                    if (reglaK[pos] == 1) {
+                        if (cont == 1) {
+                            if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                                std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                                break;
+                            }
+                            tamanoMaximo -= 2;
+                            arregloTamano[pos - 1] = tamanoMaximo;
+                            arregloRotaciones[pos - 1] = 1;
+                            cont--;
+                            extrapol--;
+                        } else {
+                            if (extrapol <= 0) {//Se hace una prueba con el extrapol para ver si es posible seguir disminuyendo la matriz
+                                std::cout << "Con las coordenadas dadas no se puede crear un sistema de apertura." << std::endl;
+                                break;
+                            }
+                            arregloTamano[pos - 1] = tamanoMaximo;
+                            cont++;
+                        }
+                    } else if (reglaK[pos] == -1) {
+                        tamanoMaximo += 2;
+                        arregloTamano[pos - 1] = tamanoMaximo;
+                        extrapol++;
+                    } else {
+                        arregloTamano[pos - 1] = tamanoMaximo;
+                    }
+                }
+                pos++;
 
+                if (pos > TamanoArreglo) {
+                    // Asignar memoria dinamica para los nuevos arreglos
+                    int* nuevoArregloTamano = new int[TamanoArreglo];
+                    int* nuevoArregloRotaciones = new int[TamanoArreglo];
+
+                    // Copiar los valores a los nuevos arreglos
+                    for (int j = 0; j < TamanoArreglo; j++) {
+                        nuevoArregloTamano[j] = arregloTamano[j];
+                        nuevoArregloRotaciones[j] = arregloRotaciones[j];
+                    }
+
+                    // Retornar los nuevos arreglos
+                    return new int*[2] {nuevoArregloTamano, nuevoArregloRotaciones};
+                }
+            }
         }
     }
 
-    return arregloTamano; // Retornar el puntero al arreglo
+    // Asignar memoria dinamica para los nuevos arreglos
+    int* nuevoArregloTamano = new int[TamanoArreglo];
+    int* nuevoArregloRotaciones = new int[TamanoArreglo];
 
+    // Copiar los valores a los nuevos arreglos
+    for (int j = 0; j < TamanoArreglo; j++) {
+        nuevoArregloTamano[j] = arregloTamano[j];
+        nuevoArregloRotaciones[j] = arregloRotaciones[j];
+    }
+
+    // Retornar los nuevos arreglos
+    return new int*[2] {nuevoArregloTamano, nuevoArregloRotaciones};
 }
