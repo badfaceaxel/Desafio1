@@ -126,3 +126,67 @@ bool cumpleRegla(int*** matrices, int* sizes, int numMatrices, int* regla, int r
     cout << "Se cumple la regla" << endl;
     return true;
 }
+
+int** copiarMatriz(int*** matrices, int* sizes, int matrizIndex) {
+    int filas = sizes[matrizIndex];
+    int columnas = sizes[matrizIndex];
+
+    // Asignar memoria para la nueva matriz
+    int** nuevaMatriz = new int*[filas];
+    for (int i = 0; i < filas; i++) {
+        nuevaMatriz[i] = new int[columnas];
+    }
+
+    // Copiar los valores de la matriz original a la nueva matriz
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            nuevaMatriz[i][j] = matrices[matrizIndex][i][j];
+        }
+    }
+
+    return nuevaMatriz;
+}
+
+// Función para liberar la memoria de una
+void liberarMatriz(int** matriz, int filas) {
+    for (int i = 0; i < filas; ++i) {
+        delete[] matriz[i];
+    }
+    delete[] matriz;
+}
+
+
+// Función para reemplazar una matriz en el arreglo de matrices
+void reemplazarMatriz(int*** arregloDeMatrices, int indice, int** nuevaMatriz, int filasNuevaMatriz, int columnasNuevaMatriz) {
+    // Liberar la memoria de la matriz existente en el índice dado
+    liberarMatriz(arregloDeMatrices[indice], filasNuevaMatriz);
+
+    // Asignar la dirección de la nueva matriz al índice correspondiente en el arreglo de matrices
+    arregloDeMatrices[indice] = nuevaMatriz;
+}
+
+void imprimirMatriz(int** matriz, int filas, int columnas) {
+    // Calcular la longitud máxima de los elementos de la matriz
+    int maximo = matriz[0][0];
+    for (int i = 0; i < filas; ++i) {
+        for (int j = 0; j < columnas; ++j) {
+            if (matriz[i][j] > maximo) {
+                maximo = matriz[i][j];
+            }
+        }
+    }
+    int longitudMaxima = 0;
+    while (maximo > 0) {
+        maximo /= 10;
+        ++longitudMaxima;
+    }
+
+    // Imprimir la matriz con setw para alinear los elementos
+    for (int i = 0; i < filas; ++i) {
+        for (int j = 0; j < columnas; ++j) {
+            std::cout << std::setw(longitudMaxima) << matriz[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
